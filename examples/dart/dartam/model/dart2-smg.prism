@@ -1,0 +1,239 @@
+smg
+
+const int HORIZON = 15;
+const double PERIOD = 1.0;
+const int MAX_ALT_LEVEL = 3;
+const int INIT_A = 1;
+const int INIT_F = 0;
+const double ALT_LATENCY = 1.0;
+const double P_LOOSE_DETECT  = 1.0;
+const double P_TIGHT_DETECT  = 0.7;
+const double P_LOOSE_DESTROY = 1.0;
+const double P_TIGHT_DESTROY = 0.3;
+const double RANGE_THREAT = MAX_ALT_LEVEL;
+const double RANGE_SENSOR = MAX_ALT_LEVEL;
+//const int TOTAL_GUNS = 3;
+//const int TOTAL_TGTS = 7;
+//const double P_GUN = 0.3;
+//const double P_TGT = 0.4;
+
+// clock turns
+const int CLK_TURN=0;
+// environment turns
+const int ENV_TURN=1;
+// system turns
+const int SYS_TURN=2;
+const int DET_TURN=3;
+// constraint check turns
+const int SAT_TURN=4;
+
+// keep track of whose "turn" it is
+global turn : [CLK_TURN..SAT_TURN] init CLK_TURN;
+
+// finish when we've reached the horizon and it is
+// time to place the guns
+label "final" = clk_time=HORIZON & turn=CLK_TURN;
+
+//************************************************************************
+// CLOCK
+//************************************************************************
+module clk
+    clk_time : [0..HORIZON] init 0;
+    [] (turn=CLK_TURN) & (clk_time<HORIZON) -> 
+        (clk_time'=clk_time+1) & (turn'=ENV_TURN);
+endmodule
+//************************************************************************
+
+
+//************************************************************************
+// ENVIRONMENT
+//************************************************************************
+global has_gun: bool init false;
+global has_tgt: bool init false;
+
+module env
+    [do_env] (turn=ENV_TURN) ->
+        1 : (turn'=SYS_TURN);
+endmodule
+
+module guns
+//    guns_placed: [0..TOTAL_GUNS] init 0;
+//    [do_env] (turn=ENV_TURN) & (guns_placed<TOTAL_GUNS) ->
+//        (P_GUN)   : (guns_placed'=(guns_placed+1)) & (has_gun'=true) +
+//        (1-P_GUN) : (has_gun'=false);
+//    [do_env] (turn=ENV_TURN) & (guns_placed>=TOTAL_GUNS) ->
+//        true;
+    [do_env] (turn=ENV_TURN) & (clk_time=1) ->
+        1 : (has_gun'=false);
+    [do_env] (turn=ENV_TURN) & (clk_time=2) ->
+        1 : (has_gun'=false);
+    [do_env] (turn=ENV_TURN) & (clk_time=3) ->
+        1 : (has_gun'=true);
+    [do_env] (turn=ENV_TURN) & (clk_time=4) ->
+        1 : (has_gun'=false);
+    [do_env] (turn=ENV_TURN) & (clk_time=5) ->
+        1 : (has_gun'=false);
+    [do_env] (turn=ENV_TURN) & (clk_time=6) ->
+        1 : (has_gun'=true);
+    [do_env] (turn=ENV_TURN) & (clk_time=7) ->
+        1 : (has_gun'=false);
+    [do_env] (turn=ENV_TURN) & (clk_time=8) ->
+        1 : (has_gun'=false);
+    [do_env] (turn=ENV_TURN) & (clk_time=9) ->
+        1 : (has_gun'=false);
+    [do_env] (turn=ENV_TURN) & (clk_time=10) ->
+        1 : (has_gun'=false);
+    [do_env] (turn=ENV_TURN) & (clk_time=11) ->
+        1 : (has_gun'=false);
+    [do_env] (turn=ENV_TURN) & (clk_time=12) ->
+        1 : (has_gun'=true);
+    [do_env] (turn=ENV_TURN) & (clk_time=13) ->
+        1 : (has_gun'=false);
+    [do_env] (turn=ENV_TURN) & (clk_time=14) ->
+        1 : (has_gun'=false);
+    [do_env] (turn=ENV_TURN) & (clk_time=15) ->
+        1 : (has_gun'=false);
+endmodule
+
+module tgts
+//    tgts_placed: [0..TOTAL_TGTS] init 0;
+//    [do_env] (turn=ENV_TURN) & (tgts_placed<TOTAL_TGTS) ->
+//        (P_TGT)   : (tgts_placed'=(tgts_placed+1)) & (has_tgt'=true) +
+//        (1-P_TGT) : (has_tgt'=false);
+//    [do_env] (turn=ENV_TURN) & (tgts_placed>=TOTAL_TGTS) ->
+//        true;
+    [do_env] (turn=ENV_TURN) & (clk_time=1) ->
+        1 : (has_tgt'=false);
+    [do_env] (turn=ENV_TURN) & (clk_time=2) ->
+        1 : (has_tgt'=true);
+    [do_env] (turn=ENV_TURN) & (clk_time=3) ->
+        1 : (has_tgt'=false);
+    [do_env] (turn=ENV_TURN) & (clk_time=4) ->
+        1 : (has_tgt'=true);
+    [do_env] (turn=ENV_TURN) & (clk_time=5) ->
+        1 : (has_tgt'=true);
+    [do_env] (turn=ENV_TURN) & (clk_time=6) ->
+        1 : (has_tgt'=false);
+    [do_env] (turn=ENV_TURN) & (clk_time=7) ->
+        1 : (has_tgt'=false);
+    [do_env] (turn=ENV_TURN) & (clk_time=8) ->
+        1 : (has_tgt'=true);
+    [do_env] (turn=ENV_TURN) & (clk_time=9) ->
+        1 : (has_tgt'=true);
+    [do_env] (turn=ENV_TURN) & (clk_time=10) ->
+        1 : (has_tgt'=false);
+    [do_env] (turn=ENV_TURN) & (clk_time=11) ->
+        1 : (has_tgt'=false);
+    [do_env] (turn=ENV_TURN) & (clk_time=12) ->
+        1 : (has_tgt'=true);
+    [do_env] (turn=ENV_TURN) & (clk_time=13) ->
+        1 : (has_tgt'=false);
+    [do_env] (turn=ENV_TURN) & (clk_time=14) ->
+        1 : (has_tgt'=true);
+    [do_env] (turn=ENV_TURN) & (clk_time=15) ->
+        1 : (has_tgt'=false);
+endmodule
+
+//************************************************************************
+// SYSTEM
+//************************************************************************
+
+// Variable range and initialization
+const a_MIN=1; const a_MAX=MAX_ALT_LEVEL; const a_INIT=INIT_A;
+const f_MIN=0; const f_MAX=1; const f_INIT=INIT_F;
+const int ALT_LATENCY_PERIODS = ceil(ALT_LATENCY/PERIOD);
+
+module sys
+    [do_sys] (turn=SYS_TURN) ->
+        1 : (turn'=DET_TURN);
+endmodule
+
+module altitude
+    a : [a_MIN..a_MAX] init a_INIT;
+    a_progress : [-ALT_LATENCY_PERIODS..ALT_LATENCY_PERIODS] init 0;
+
+    // keep the altitude the same, increase, or decrease
+    [do_sys] (turn=SYS_TURN) & (a_progress=0) ->
+        true;
+    [do_sys] (turn=SYS_TURN) & (a<a_MAX) & (a_progress=0) ->
+        1 : (a_progress'=( ALT_LATENCY_PERIODS));
+    [do_sys] (turn=SYS_TURN) & (a>a_MIN) & (a_progress=0) ->
+        1 : (a_progress'=(-ALT_LATENCY_PERIODS));
+
+    // progress
+    [do_sys] (turn=SYS_TURN) & (a_progress>1) ->
+	1 : (a_progress'=(a_progress-1));
+    [do_sys] (turn=SYS_TURN) & (a_progress<(-1)) ->
+	1 : (a_progress'=(a_progress+1));
+
+    // finish
+    [do_sys] (turn=SYS_TURN) & (a_progress=1) ->
+        1 : (a_progress'=0) & (a'=(a+1));
+    [do_sys] (turn=SYS_TURN) & (a_progress=(-1)) ->
+        1 : (a_progress'=0) & (a'=(a-1));
+endmodule
+
+module formation
+    f : [0..1] init f_INIT;
+
+    // keep the formation the same, go tight, or go loose
+    [do_sys] (turn=SYS_TURN) ->
+        true;
+    [do_sys] (turn=SYS_TURN) & f=0 ->
+        1 : (f'=1);
+    [do_sys] (turn=SYS_TURN) & f=1 ->
+        1 : (f'=0);
+endmodule
+
+//*******************************
+// Utility Function
+//*******************************
+const int LOOSE = 0;
+const int TIGHT = 1;
+
+formula probabilityOfDestruction = (has_gun?1:0)
+    * ((f = LOOSE) ? P_LOOSE_DESTROY : P_TIGHT_DESTROY)
+    * max(0.0, RANGE_THREAT - a) / RANGE_THREAT;
+
+module constraint // in this case the constraint is surviving
+	satisfied: bool init true;
+	[] (turn=SAT_TURN) & satisfied -> 
+		(1.0 - probabilityOfDestruction) : (turn'=CLK_TURN) & (satisfied'=true) + 
+		(probabilityOfDestruction)       : (turn'=CLK_TURN) & (satisfied'=false);
+	[] (turn=SAT_TURN) & !satisfied -> 
+            1 : (turn'=CLK_TURN);
+endmodule
+
+formula probOfDetection = (has_tgt ? 1.0 : 0.0)
+    * ((f=LOOSE) ? P_LOOSE_DETECT : P_TIGHT_DETECT)
+    * max(0.0, RANGE_SENSOR - a) / RANGE_SENSOR
+;
+
+module sensor
+	targetDetected : bool init false;
+	[] (turn=DET_TURN) -> 
+		(probOfDetection)      : (turn'=SAT_TURN) & (targetDetected'=true) + 
+		(1.0 - probOfDetection): (turn'=SAT_TURN) & (targetDetected'=false);
+endmodule
+
+rewards "destroy"
+    [] (turn=CLK_TURN) & (!satisfied) : 1;
+endrewards
+
+rewards "detect"
+	// if the constraint is satisfied and a target is 
+	// detected, add one to the cumulative utility
+	[] (turn=CLK_TURN) & (satisfied): (targetDetected?10:1);
+	
+	// give slight preference to not adapting
+	[] (turn=CLK_TURN) & clk_time = 1
+		& a_progress=0
+		& a=INIT_A 
+		& f=INIT_F 
+			: 0.000000001;
+endrewards
+
+player ground clk, env, [do_env], guns, tgts, constraint endplayer
+player drones sys, [do_sys], altitude, formation, sensor endplayer
+
+
