@@ -1,0 +1,104 @@
+player env environment, clk endplayer
+player sys target_system, [enlist], [enlist_trigger], [discharge], [if], [df] endplayer
+
+const ENV_TURN=1; const SYS_TURN=2; const CLK_TURN=3;
+
+global turn: [ENV_TURN..CLK_TURN] init ENV_TURN;
+
+const MAX_TIME=1000;
+const TAU=10;
+
+const MAX_RT=5000;
+const INIT_RT=1000;
+ 
+formula totalTime = (1/INIT_RT) + (P_q/((m*INIT_RT)-arrivals_current));
+
+module clk
+    t  : [0..MAX_TIME] init 0;
+    rt : [0..MAX_RT] init INIT_RT;
+    rt_upd: bool init false;
+
+    [] (t<MAX_TIME) & (turn=CLK_TURN) & (!rt_upd) -> 
+        (rt_upd'=true)  & (rt'=totalTime);
+    [] (t<MAX_TIME) & (turn=CLK_TURN) & (rt_upd)  -> 
+        (rt_upd'=false) & (t'=t+TAU) & (turn'=ENV_TURN);
+endmodule
+
+const MAX_ARRIVALS=300;
+const MAX_INST_ARRIVALS=20;
+
+const XXX=100;
+module environment
+    arrivals_total : [0..MAX_ARRIVALS] init MAX_ARRIVALS;
+    arrivals_current : [0..MAX_INST_ARRIVALS] init 0;
+
+    [] (t<MAX_TIME) & (turn=ENV_TURN) & (t=0) -> 
+	(turn'=CLK_TURN) & (arrivals_current'=arrivals_total-XXX >= 0?XXX:0) &
+        (arrivals_total'=arrivals_total-XXX>=0?arrivals_total-XXX:0);
+endmodule
+
+const MAX_SERVERS=4;
+const MIN_SERVERS=0;
+const INIT_SERVERS=2;
+const bool FIDELITY_ENABLED=false;
+const MAX_FIDELITY=2;
+const MIN_FIDELITY=1;
+const INIT_FIDELITY=2;
+const ENLIST_LATENCY=1;
+
+module target_system
+    s : [MIN_SERVERS..MAX_SERVERS]  init INIT_SERVERS;
+    f : [MIN_FIDELITY..MAX_FIDELITY] init INIT_FIDELITY;
+
+    counter : [-1..ENLIST_LATENCY] init -1;
+
+    [skip] (turn=SYS_TURN) & (counter=(-1)) ->
+        (turn'=CLK_TURN);
+
+    [progress] (turn=SYS_TURN) & (s<=MAX_SERVERS) & (counter>0) -> 
+        (turn'=CLK_TURN) & (counter'=counter-1);
+
+    [enlist_trigger] (turn=SYS_TURN) & (s<MAX_SERVERS) & (counter=(-1)) & (ENLIST_LATENCY>0) ->
+        (turn'=CLK_TURN) & (counter'=ENLIST_LATENCY-1);
+    [enlist_trigger] (turn=SYS_TURN) & (s<MAX_SERVERS) & (counter=(-1)) & (ENLIST_LATENCY=0) ->
+        (turn'=CLK_TURN) & (s'=s+1);
+
+    [enlist] (turn=SYS_TURN) & (s<MAX_SERVERS) & (counter=0) ->
+        (turn'=CLK_TURN) & (s'=s+1) & (counter'=(-1));
+
+    [discharge] (turn=SYS_TURN) & (s>MIN_SERVERS) & (counter=(-1)) ->
+        (turn'=CLK_TURN) & (s'=s-1);
+
+    [df] (turn=SYS_TURN) & FIDELITY_ENABLED & (f>MIN_FIDELITY) & (counter=(-1)) ->
+        (turn'=CLK_TURN) & (f'=f-1);
+    [if] (turn=SYS_TURN) & FIDELITY_ENABLED & (f<MIN_FIDELITY) & (counter=(-1)) ->
+        (turn'=CLK_TURN) & (f'=f+1);
+endmodule
+
+formula uR = 
+    (rt <=  100 ? 1.00 :
+    (rt <=  200 ? 1.00 + (-0.01)*((rt- 100)/100) :
+    (rt <=  500 ? 0.99 + (-0.09)*((rt- 200)/300) : 
+    (rt <= 1000 ? 0.90 + (-0.15)*((rt- 500)/500) :
+    (rt <= 1500 ? 0.75 + (-0.25)*((rt-1000)/500) :
+    (rt <= 2000 ? 0.50 + (-0.25)*((rt-1500)/500) :
+    (rt <= 4000 ? 0.25 + (-0.25)*((rt-2000)/2000):
+        (0))))))));
+
+formula uF =
+    (f = MAX_FIDELITY ? 1 : 0.25);
+
+formula uC =
+    (s <= 1 ? 1 :
+    (s  = 2 ? 0.9 :
+    (s  = 3 ? 0.3 :
+    (s  = 4 ? 0.1 :
+        (0)))));
+
+const double W_UR=0.6;
+const double W_UF=0.0;
+const double W_UC=0.4;
+
+rewards "rIU"
+    (turn=SYS_TURN) : TAU*(uR=0?0:((W_UR* uR)+(W_UF*uF)+(W_UC*uC)));
+endrewards
