@@ -1,6 +1,6 @@
 #!/bin/sh
-ALLOYJAR=alloy4.2.jar
-ALLOYURL=http://alloytools.org/download/alloy4.2_2015-02-22.jar
+ALLOYJAR=alloy5.0.jar
+ALLOYURL=https://github.com/AlloyTools/org.alloytools.alloy/releases/download/v5.0.0.1/Alloy-5.0.0.1.jar
 YAMLJAR=yamlbeans-1.11.jar
 YAMLURL=https://github.com/EsotericSoftware/yamlbeans/releases/download/1.11/yamlbeans-1.11.jar
 

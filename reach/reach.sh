@@ -6,7 +6,7 @@ SATLIBPATH=amd64-linux
 # extract SAT solver libraries if not already extracted
 if [ ! -e $LIB/$SATLIBPATH ]; then
     echo Extracting SAT solver libs
-    (cd $LIB; jar xf alloy4.2.jar $SATLIBPATH)
+    (cd $LIB; jar xf alloy5.0.jar $SATLIBPATH)
 fi
 
 export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$LIB/$SATLIBPATH

@@ -21,8 +21,8 @@
 package reach;
 
 import edu.mit.csail.sdg.alloy4.Err;
-import edu.mit.csail.sdg.alloy4compiler.ast.Module;
-import edu.mit.csail.sdg.alloy4compiler.translator.A4Solution;
+import edu.mit.csail.sdg.ast.Module;
+import edu.mit.csail.sdg.translator.A4Solution;
 
 public class ConfigDart implements Configuration {
 	public int formation; // 0: loose, 1: tight
