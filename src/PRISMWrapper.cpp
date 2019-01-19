@@ -291,16 +291,19 @@ bool PRISMWrapper::generateModel(string environmentModel, string initialState, c
 
 	ifstream fin(modelTemplatePath.c_str());
 	if (!fin) {
-		cout << "Could not read input file " << get_current_dir_name() << '/' << modelTemplatePath << endl;
-		cout << "Error is: " << strerror(errno) << endl;
-		cout << "Retrying..." << endl;
+            char* current_dir = getcwd(NULL,0);
+            cout << "Could not read input file " << current_dir << '/' << modelTemplatePath << endl;
+            cout << "Error is: " << strerror(errno) << endl;
+	    cout << "Retrying..." << endl;
 	    fin.open(modelTemplatePath.c_str(), ifstream::in);
 	    if (!fin) {
-	        cout << "Could not read input file " << get_current_dir_name() << '/' << modelTemplatePath << endl;
+	        cout << "Could not read input file " << current_dir << '/' << modelTemplatePath << endl;
 	        cout << "Error is: " << strerror(errno) << endl;
+                free(current_dir);
 	        return false;
 	    }
-		cout << "it worked!" << endl;
+            cout << "it worked!" << endl;
+            free(current_dir);
 	}
 
 	string line;
