@@ -39,7 +39,7 @@ public class Reach {
 		
 		while (argBase < args.length && args[argBase].startsWith("-")) {
 			if (args[argBase].equals("-d")) {
-				configClassName = "ConfigDart";
+				configClassName = "ConfigDart2";
 				argBase++;
 			}
 
