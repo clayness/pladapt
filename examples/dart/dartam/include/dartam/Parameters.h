@@ -79,6 +79,7 @@ struct AdaptationManagerParams {
 	std::string REACH_PATH = "../../../reach/reach.sh";
 	std::string REACH_MODEL = "../../../reach/model/dart2";
 	std::string REACH_PREFIX = "";
+        std::string YAML_FOLDER = "";
 	double probabilityBound = 0.90; /**< lower bound on the probability of survival */
 	double finalReward = 0.00001; // so that all else being equal, it'll favor surviving
 	std::string PRISM_TEMPLATE = "../dartam/model/dart2";

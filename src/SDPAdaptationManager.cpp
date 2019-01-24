@@ -93,9 +93,9 @@ void SDPAdaptationManager::loadImmediateReachabilityRelation() {
     pImmediateReachabilityRelation.reset(new ReachabilityRelation(pConfigMgr->getConfigurationSpace()));
 
     string outputPath("");
-    if (params[YAML_FOLDER].IsDefined()) {
+    if (!params[YAML_FOLDER].as<string>().empty()) {
         outputPath = params[YAML_FOLDER].as<string>();
-        outputPath += ".i.yaml";
+        outputPath += "dart.i.yaml";
     } else {
         outputPath = getAlloyOutputPath(true);
         string command = getAlloyCommand(true, outputPath);
@@ -135,14 +135,15 @@ void SDPAdaptationManager::loadReachabilityRelation() {
        pStepReachabilityRelation->makeIdentity();
     } else {
         string outputPath("");
-        if (params[YAML_FOLDER].IsDefined()) {
+        if (!params[YAML_FOLDER].as<string>().empty()) {
             outputPath = params[YAML_FOLDER].as<string>();
-            outputPath += ".yaml";
+            outputPath += "dart.yaml";
+            cout << "adapting with passed file: " << outputPath << endl;
         } else {
             outputPath = getAlloyOutputPath(false);
             string command = getAlloyCommand(false, outputPath);
 
-            cout << "invoking " << command << endl;
+            cout << "invoking " << command << " to file: " << outputPath << endl;
 
             if (system(command.c_str()) != 0) {
                 throw runtime_error(string("Generation of step reachability function failed: ") + command.c_str());

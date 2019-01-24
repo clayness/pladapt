@@ -58,7 +58,8 @@ enum ARGS {
 	TWO_LEVEL_TACTICS,
 	ADAPT_MGR,
 	PRISM_TEMPLATE,
-	OPT_TEST
+	OPT_TEST,
+	YAML_FOLDER
 #if DART_USE_CE
 	,
 	CE_NONINCREMENTAL,
@@ -98,6 +99,7 @@ static struct option long_options[] = {
 	{"adapt-mgr", required_argument, 0, ADAPT_MGR },
     {"prism-template",  required_argument, 0,  PRISM_TEMPLATE },
 	{"opt-test", no_argument, 0, OPT_TEST },
+	{"yaml-folder", required_argument, 0, YAML_FOLDER },
 #if DART_USE_CE
 	{"ce-nonincremental", no_argument, 0, CE_NONINCREMENTAL },
 	{"ce-hint-weight", required_argument, 0, CE_HINT_WEIGHT },
@@ -219,6 +221,9 @@ int main(int argc, char** argv) {
 			break;
 		case OPT_TEST:
 			simParams.optimalityTest = true;
+			break;
+		case YAML_FOLDER:
+			adaptParams.adaptationManager.YAML_FOLDER = optarg;
 			break;
 #if DART_USE_CE
 		case CE_NONINCREMENTAL:

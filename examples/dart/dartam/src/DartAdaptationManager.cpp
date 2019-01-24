@@ -78,6 +78,8 @@ void DartAdaptationManager::instantiateAdaptationMgr(const Params& params) {
 	    	amParams[pladapt::SDPAdaptationManager::REACH_MODEL] = params.adaptationManager.REACH_MODEL;
 	    }
 
+            amParams[pladapt::SDPAdaptationManager::YAML_FOLDER] = params.adaptationManager.YAML_FOLDER;
+
 	    stringstream scope;
 	    scope << "A=" << params.configurationSpace.ALTITUDE_LEVELS;
 	    scope << " F=2";
