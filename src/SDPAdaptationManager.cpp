@@ -46,6 +46,7 @@ const char* SDPAdaptationManager::REACH_PATH = "reachPath";
 const char* SDPAdaptationManager::REACH_PREFIX = "reachPrefix";
 const char* SDPAdaptationManager::REACH_MODEL = "reachModel";
 const char* SDPAdaptationManager::REACH_SCOPE = "reachScope";
+const char* SDPAdaptationManager::YAML_FOLDER = "yamlFolder";
 
 
 SDPAdaptationManager::SDPAdaptationManager() {
@@ -91,13 +92,19 @@ void SDPAdaptationManager::loadImmediateReachabilityRelation() {
 
     pImmediateReachabilityRelation.reset(new ReachabilityRelation(pConfigMgr->getConfigurationSpace()));
 
-    string outputPath = getAlloyOutputPath(true);
-    string command = getAlloyCommand(true, outputPath);
+    string outputPath("");
+    if (params[YAML_FOLDER].IsDefined()) {
+        outputPath = params[YAML_FOLDER].as<string>();
+        outputPath += ".i.yaml";
+    } else {
+        outputPath = getAlloyOutputPath(true);
+        string command = getAlloyCommand(true, outputPath);
 
-    cout << "invoking " << command << endl;
+        cout << "invoking " << command << endl;
 
-    if (system(command.c_str()) != 0) {
-        throw runtime_error(string("Generation of immediate reachability function failed: ") + command.c_str());
+        if (system(command.c_str()) != 0) {
+            throw runtime_error(string("Generation of immediate reachability function failed: ") + command.c_str());
+        }
     }
 
     pImmediateReachabilityRelation->load(outputPath, *pConfigMgr);
@@ -127,13 +134,19 @@ void SDPAdaptationManager::loadReachabilityRelation() {
        // the underlying StepReachabilityRelation is the identity
        pStepReachabilityRelation->makeIdentity();
     } else {
-        string outputPath = getAlloyOutputPath(false);
-        string command = getAlloyCommand(false, outputPath);
+        string outputPath("");
+        if (params[YAML_FOLDER].IsDefined()) {
+            outputPath = params[YAML_FOLDER].as<string>();
+            outputPath += ".yaml";
+        } else {
+            outputPath = getAlloyOutputPath(false);
+            string command = getAlloyCommand(false, outputPath);
 
-        cout << "invoking " << command << endl;
+            cout << "invoking " << command << endl;
 
-        if (system(command.c_str()) != 0) {
-            throw runtime_error(string("Generation of step reachability function failed: ") + command.c_str());
+            if (system(command.c_str()) != 0) {
+                throw runtime_error(string("Generation of step reachability function failed: ") + command.c_str());
+            }
         }
 
         pStepReachabilityRelation->load(outputPath, *pConfigMgr);

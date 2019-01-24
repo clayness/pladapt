@@ -102,6 +102,7 @@ class SDPAdaptationManager : public AdaptationManager
     static const char* REACH_PREFIX;
     static const char* REACH_MODEL;
     static const char* REACH_SCOPE;
+    static const char* YAML_FOLDER;
 
     SDPAdaptationManager();
 
