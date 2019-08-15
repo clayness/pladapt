@@ -12,6 +12,8 @@ Makefile
 !.project
 *~
 .settings
+results/
+bin/
 
 # http://www.gnu.org/software/automake
 

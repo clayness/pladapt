@@ -69,6 +69,8 @@ public:
     		std::shared_ptr<const PMCHelper> helper);
     virtual TacticList evaluate(const Configuration& currentConfigObj, const EnvironmentDTMCPartitioned& envDTMC,
     		const UtilityFunction& utilityFunction, unsigned horizon);
+    virtual TacticList evaluate(const Configuration& currentConfigObj, const EnvironmentDTMCPartitioned& envDTMC,
+    		const UtilityFunction& utilityFunction, unsigned horizon, unsigned& transitionsEvaluted);
 
     static std::string generateEnvironmentDTMC(const EnvironmentDTMCPartitioned& envDTMC);
 

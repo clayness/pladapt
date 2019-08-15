@@ -41,4 +41,9 @@ std::shared_ptr<Strategy> AdaptationManager::getStrategy() {
 	return std::shared_ptr<Strategy>();
 }
 
+TacticList AdaptationManager::evaluate(const Configuration& currentConfigObj, const EnvironmentDTMCPartitioned& envDTMC,
+    		const UtilityFunction& utilityFunction, unsigned horizon, unsigned& transitionsEvaluated) {
+	return evaluate(currentConfigObj, envDTMC, utilityFunction, horizon);
+}
+
 } // namespace

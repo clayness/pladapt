@@ -147,7 +147,7 @@ void DartAdaptationManager::initialize(const Params& params, std::unique_ptr<pla
 }
 
 pladapt::TacticList DartAdaptationManager::decideAdaptation(
-		const DartMonitoringInfo& monitoringInfo) {
+		const DartMonitoringInfo& monitoringInfo, unsigned& transitionsEvaluated) {
 
 	/* update environment */
 	pEnvThreatMonitor->update(monitoringInfo.threatSensing);
@@ -161,7 +161,7 @@ pladapt::TacticList DartAdaptationManager::decideAdaptation(
 
 	/* make adaptation decision */
 	//adaptMgr->setDebug(monitoringInfo.position.x == 4);
-	return adaptMgr->evaluate(convertToDiscreteConfiguration(monitoringInfo), jointEnv, *pUtilityFunction, params.adaptationManager.HORIZON);
+	return adaptMgr->evaluate(convertToDiscreteConfiguration(monitoringInfo), jointEnv, *pUtilityFunction, params.adaptationManager.HORIZON, transitionsEvaluated);
 }
 
 DartConfiguration DartAdaptationManager::convertToDiscreteConfiguration(const DartMonitoringInfo& info) const {

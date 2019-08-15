@@ -198,6 +198,7 @@ SimulationResults Simulation::run(const SimulationParams& simParams, const Param
 	bool destroyed = false;
 
 	unsigned screenPosition = 0;
+        unsigned transitionsEvaluated = 0;
 
 	/* sim loop */
 	Coordinate position;
@@ -254,7 +255,7 @@ SimulationResults Simulation::run(const SimulationParams& simParams, const Param
 
 			/* invoke adaptation manager */
 			auto startTime = myclock::now();
-			tactics = adaptMgr.decideAdaptation(monitoringInfo);
+			tactics = adaptMgr.decideAdaptation(monitoringInfo, transitionsEvaluated);
 			auto delta = myclock::now() - startTime;
 			double deltaMsec = chrono::duration_cast<chrono::duration<double, std::milli>>(delta).count();
 			decisionTimeStats(deltaMsec);
@@ -364,6 +365,7 @@ SimulationResults Simulation::run(const SimulationParams& simParams, const Param
 	results.missionSuccess = !destroyed && targetsDetected >= simParams.scenario.TARGETS / 2.0;
 	results.decisionTimeAvg = boost::accumulators::mean(decisionTimeStats);
 	results.decisionTimeVar = boost::accumulators::moment<2>(decisionTimeStats);
+	results.transitionsEvaluated = transitionsEvaluated;
 
 	return results;
 }

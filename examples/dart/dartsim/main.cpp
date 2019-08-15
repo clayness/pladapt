@@ -380,6 +380,7 @@ int main(int argc, char** argv) {
 			<< ',' << results.missionSuccess
 			<< ',' << results.decisionTimeAvg
 			<< ',' << results.decisionTimeVar
+                        << ',' << results.transitionsEvaluated
 			<<  endl;
 
 	return 0;

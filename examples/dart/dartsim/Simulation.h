@@ -50,6 +50,7 @@ struct SimulationResults {
 	bool missionSuccess;
 	double decisionTimeAvg;
 	double decisionTimeVar;
+	unsigned transitionsEvaluated;
 };
 
 class Simulation {

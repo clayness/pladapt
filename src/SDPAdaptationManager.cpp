@@ -198,9 +198,14 @@ void SDPAdaptationManager::initialize(std::shared_ptr<const ConfigurationManager
 #endif
 }
 
-
 TacticList SDPAdaptationManager::evaluate(const Configuration& currentConfigObj, const EnvironmentDTMCPartitioned& envDTMC,
 		const UtilityFunction& utilityFunction, unsigned horizon) {
+	unsigned ignored = 0;
+	return evaluate(currentConfigObj, envDTMC, utilityFunction, horizon, ignored);
+}
+
+TacticList SDPAdaptationManager::evaluate(const Configuration& currentConfigObj, const EnvironmentDTMCPartitioned& envDTMC,
+		const UtilityFunction& utilityFunction, unsigned horizon, unsigned& transitionsEvaluated) {
 
 	if (horizon == 0) {
 		throw std::invalid_argument("SDPAdaptationManager::evaluate() called with horizon = 0");
@@ -330,6 +335,7 @@ TacticList SDPAdaptationManager::evaluate(const Configuration& currentConfigObj,
                         try {
                             util += envDTMC.getTransitionMatrix()(*envState, *nextEnvState)
                                     * pNextUtil->at(nextSysEnvPair);
+                            transitionsEvaluated++;
                         } catch(...) {
                             cout << "didn't find util for (" << configSpace.getConfiguration(nextSysEnvPair.first)
                                     << ',' << envDTMC.getStateValue(nextSysEnvPair.second) << " at t=" << t + 1 << endl;

@@ -41,6 +41,12 @@ void PMCAdaptationManager::initialize(std::shared_ptr<const ConfigurationManager
 
 TacticList PMCAdaptationManager::evaluate(const Configuration& currentConfigObj, const EnvironmentDTMCPartitioned& envDTMC,
     		const UtilityFunction& utilityFunction, unsigned horizon) {
+	unsigned ignored = 0;
+	return evaluate(currentConfigObj, envDTMC, utilityFunction, horizon, ignored);
+}
+
+TacticList PMCAdaptationManager::evaluate(const Configuration& currentConfigObj, const EnvironmentDTMCPartitioned& envDTMC,
+    		const UtilityFunction& utilityFunction, unsigned horizon, unsigned& transitionsEvaluted) {
 
 	/* check if we need to adjust the horizon to the environment size */
 	if ((envDTMC.getNumberOfParts() - 1) < horizon) {
